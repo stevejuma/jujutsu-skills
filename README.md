@@ -26,22 +26,22 @@ frontmatter uses `name: jj-jujutsu`, matching the skill directory name.
 
 ## Install With GitHub CLI
 
-Replace `OWNER/REPO` with the GitHub repository that hosts this skill.
+Replace `stevejuma/jj-jujutsu-skill` with the GitHub repository that hosts this skill.
 
 ```bash
-gh skill install OWNER/REPO jj-jujutsu --agent codex --scope user
+gh skill install stevejuma/jj-jujutsu-skill jj-jujutsu --agent codex --scope user
 ```
 
 For faster installation from a larger repository, install by path:
 
 ```bash
-gh skill install OWNER/REPO skills/jj-jujutsu --agent codex --scope user
+gh skill install stevejuma/jj-jujutsu-skill skills/jj-jujutsu --agent codex --scope user
 ```
 
 To install into a project instead of user scope:
 
 ```bash
-gh skill install OWNER/REPO jj-jujutsu --agent codex --scope project
+gh skill install stevejuma/jj-jujutsu-skill jj-jujutsu --agent codex --scope project
 ```
 
 ## Install With npx skills
@@ -49,19 +49,19 @@ gh skill install OWNER/REPO jj-jujutsu --agent codex --scope project
 Install globally for Codex:
 
 ```bash
-npx skills add OWNER/REPO --skill jj-jujutsu -a codex -g -y
+npx skills add stevejuma/jj-jujutsu-skill --skill jj-jujutsu -a codex -g -y
 ```
 
 List skills discoverable in the repository:
 
 ```bash
-npx skills add OWNER/REPO --list
+npx skills add stevejuma/jj-jujutsu-skill --list
 ```
 
 Install from the direct GitHub skill path:
 
 ```bash
-npx skills add https://github.com/OWNER/REPO/tree/main/skills/jj-jujutsu -a codex -g -y
+npx skills add https://github.com/stevejuma/jj-jujutsu-skill/tree/main/skills/jj-jujutsu -a codex -g -y
 ```
 
 ## Local Development Install
