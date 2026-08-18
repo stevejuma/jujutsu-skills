@@ -1,9 +1,17 @@
-# jj-jujutsu Agent Skill
+# Jujutsu and Forgejo Agent Skills
 
-`jj-jujutsu` teaches agents how to use Jujutsu (`jj`) for version-control
-workflows instead of raw Git commands. It covers status, diffs, committing,
-file-specific commits, moving or removing files from commits, history rewriting,
-bookmarks, Git remote interop, workspaces, conflicts, and recovery.
+This repository contains portable agent skills for Jujutsu and Forgejo
+workflows.
+
+- `jj-jujutsu` teaches agents to use Jujutsu (`jj`) instead of raw Git for
+  local version-control operations.
+- `forgejo-fj` teaches agents to use the Forgejo `fj` CLI for repositories,
+  issues, pull requests, releases, and Actions. It is Jujutsu-first when `jj`
+  is installed and the current repository is a Jujutsu repository, and it
+  prefers `jj git clone` for brand-new clones. It feature-detects any job/log
+  support built into `fj`, then uses `fj-ex` as an
+  optional extension for missing Actions features such as watching, artifacts,
+  reruns, and cancellation.
 
 ## Repository Layout
 
@@ -11,57 +19,97 @@ bookmarks, Git remote interop, workspaces, conflicts, and recovery.
 .
 ├── README.md
 └── skills/
-    └── jj-jujutsu/
+    ├── jj-jujutsu/
+    │   ├── SKILL.md
+    │   ├── config.md
+    │   ├── git-interop.md
+    │   ├── history.md
+    │   ├── pager-commands.md
+    │   ├── revsets.md
+    │   └── sharing.md
+    └── forgejo-fj/
         ├── SKILL.md
-        ├── config.md
-        ├── git-interop.md
-        ├── history.md
-        ├── pager-commands.md
-        ├── revsets.md
-        └── sharing.md
+        ├── actions.md
+        ├── authentication.md
+        ├── issues.md
+        ├── jj-first.md
+        ├── other-operations.md
+        ├── pull-requests.md
+        ├── repositories-and-releases.md
+        └── troubleshooting.md
 ```
 
-The installable skill lives at `skills/jj-jujutsu/`. The `SKILL.md`
-frontmatter uses `name: jj-jujutsu`, matching the skill directory name.
+Each installable skill lives in its own directory under `skills/`. The
+`name` in each `SKILL.md` frontmatter matches its directory name.
 
 ## Install With GitHub CLI
 
-Replace `stevejuma/jj-jujutsu-skill` with the GitHub repository that hosts this skill.
+Install the Jujutsu skill globally for Codex:
 
 ```bash
-gh skill install stevejuma/jj-jujutsu-skill jj-jujutsu --agent codex --scope user
+gh skill install stevejuma/jj-jujutsu-skill jj-jujutsu \
+  --agent codex \
+  --scope user
 ```
 
-For faster installation from a larger repository, install by path:
+Install the Forgejo skill globally for Codex:
 
 ```bash
-gh skill install stevejuma/jj-jujutsu-skill skills/jj-jujutsu --agent codex --scope user
+gh skill install stevejuma/jj-jujutsu-skill forgejo-fj \
+  --agent codex \
+  --scope user
 ```
 
-To install into a project instead of user scope:
+For faster installation, install either skill by path:
 
 ```bash
-gh skill install stevejuma/jj-jujutsu-skill jj-jujutsu --agent codex --scope project
+gh skill install stevejuma/jj-jujutsu-skill skills/jj-jujutsu \
+  --agent codex \
+  --scope user
+gh skill install stevejuma/jj-jujutsu-skill skills/forgejo-fj \
+  --agent codex \
+  --scope user
 ```
 
-## Install With npx skills
+To install into a project instead of user scope, replace `--scope user` with
+`--scope project`.
 
-Install globally for Codex:
+## Install With `npx skills`
 
-```bash
-npx skills add stevejuma/jj-jujutsu-skill --skill jj-jujutsu -a codex -g -y
-```
-
-List skills discoverable in the repository:
+List the skills discoverable in the repository:
 
 ```bash
 npx skills add stevejuma/jj-jujutsu-skill --list
 ```
 
-Install from the direct GitHub skill path:
+Install the Jujutsu skill globally for Codex:
 
 ```bash
-npx skills add https://github.com/stevejuma/jj-jujutsu-skill/tree/main/skills/jj-jujutsu -a codex -g -y
+npx skills add stevejuma/jj-jujutsu-skill \
+  --skill jj-jujutsu \
+  -a codex \
+  -g \
+  -y
+```
+
+Install the Forgejo skill globally for Codex:
+
+```bash
+npx skills add stevejuma/jj-jujutsu-skill \
+  --skill forgejo-fj \
+  -a codex \
+  -g \
+  -y
+```
+
+Install directly from a skill path:
+
+```bash
+npx skills add \
+  https://github.com/stevejuma/jj-jujutsu-skill/tree/main/skills/forgejo-fj \
+  -a codex \
+  -g \
+  -y
 ```
 
 ## Local Development Install
@@ -70,28 +118,41 @@ From the repository root:
 
 ```bash
 gh skill install . jj-jujutsu --from-local --agent codex --scope user
+gh skill install . forgejo-fj --from-local --agent codex --scope user
 ```
 
 Or with `npx skills`:
 
 ```bash
 npx skills add . --skill jj-jujutsu -a codex -g
+npx skills add . --skill forgejo-fj -a codex -g
 ```
 
-If the skill does not appear immediately in Codex, restart or reload Codex so it
-rescans installed skills.
+Restart or reload the agent if it does not immediately discover a newly
+installed skill.
 
 ## Validation
 
-Before publishing, verify the repository exposes one installable skill:
+Verify that both skills are exposed:
 
 ```bash
-find skills -name SKILL.md
+find skills -name SKILL.md -print | sort
 ```
 
-Optional checks when the CLIs are available:
+Expected paths:
+
+```text
+skills/forgejo-fj/SKILL.md
+skills/jj-jujutsu/SKILL.md
+```
+
+Optional checks when the relevant CLIs are available:
 
 ```bash
 gh skill publish --dry-run
 npx skills add . --list
+fj version
+fj actions --help
+command -v jj >/dev/null && jj version
+command -v fj-ex >/dev/null && fj-ex --help
 ```
